@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BACKEND = os.getenv("BACKEND_URL", "http://localhost:8000")
+if "BACKEND_URL" is st.secrets:
+    BACKEND = st.secrets.BACKEND_URL
+else:
+    BACKEND = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 st.set_page_config(
     page_title="JA Assure AI Marketing Agent",
