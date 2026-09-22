@@ -103,7 +103,12 @@ def generate_leads(req: LeadRequest, db: Session = Depends(get_db)):
         result = LeadAgent(get_ai()).run(
             req.brand, req.target_industry, req.location, req.count
         )
-        leads = result.get("leads", [])
+        
+        if isinstance(result, list):
+            leads = result
+        else:
+            leads = result.get("leads", [])
+
         for item in leads:
             db.add(Lead(
                 name=item.get("name", ""),
@@ -115,7 +120,7 @@ def generate_leads(req: LeadRequest, db: Session = Depends(get_db)):
                 outreach=item.get("outreach", ""),
             ))
         db.commit()
-        return result
+        return {"leads": leads}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
